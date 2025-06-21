@@ -6,9 +6,16 @@ class Program
     {
         Console.Write("Enter the amount you want to balance: ");
         decimal.TryParse(Console.ReadLine(), out decimal amount);
-        var deposit = new Deposit(amount);
-        Console.WriteLine($"Percentage: {deposit.Percentage}");
-        Console.WriteLine($"Total amount after applying percentage: {deposit.CalculateTotalWithPercentage()}");
-        Console.WriteLine($"With bonuses: {deposit.CalculateTotalWithPercentageAndBonus()}");
+        try
+        {
+            var deposit = new Deposit(amount);
+            Console.WriteLine($"Percentage: {deposit.Percentage}");
+            Console.WriteLine($"Total amount after applying percentage: {deposit.CalculateTotalWithPercentage()}");
+            Console.WriteLine($"With bonuses: {deposit.CalculateTotalWithPercentageAndBonus()}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }
