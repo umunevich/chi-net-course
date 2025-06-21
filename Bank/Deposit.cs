@@ -7,7 +7,7 @@ public class Deposit
         get => _amount;
         set
         {
-            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(value, 0);
             _amount = value;
             _percentage = CalculatePercentage(_amount);
         }
