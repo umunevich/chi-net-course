@@ -12,14 +12,25 @@ public class Deposit
             _percentage = CalculatePercentage(_amount);
         }
     }
+    
     public decimal Percentage
     {
         get => _percentage;
     }
 
-    public decimal GetTotalAmount()
+    public Deposit(decimal amount)
     {
-        return Amount + Amount * Percentage / 100 + BonusUnits;
+        Amount = amount;
+    }
+    
+    public decimal CalculateTotalWithPercentage()
+    {
+        return Amount + Amount * Percentage / 100;
+    }
+
+    public decimal CalculateTotalWithPercentageAndBonus()
+    {
+        return CalculateTotalWithPercentage() + BonusUnits;
     }
     
     private const int LowBound = 100;
@@ -32,6 +43,7 @@ public class Deposit
     private decimal _amount;
     private decimal _percentage;
     private const int BonusUnits = 15;
+    
     private decimal CalculatePercentage(decimal amount)
     {
         switch (amount)
