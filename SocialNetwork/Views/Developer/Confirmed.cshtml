@@ -1,0 +1,11 @@
+@model Developer
+
+@{
+    ViewData["Title"] = "Success";
+}
+
+<div class="d-flex justify-content-center">
+    <h2 style="padding-top: 200px;">
+        Я, @Html.DisplayFor(model => model.Name) (@Html.DisplayFor(model => model.Email)), став розробником ASP.NET
+    </h2>
+</div>
