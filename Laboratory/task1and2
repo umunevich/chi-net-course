@@ -1,0 +1,80 @@
+CREATE TABLE Groups (
+    gr_id SERIAL PRIMARY KEY,
+    gr_name VARCHAR(255) NOT NULL,
+    gr_temp VARCHAR(100)
+);
+
+CREATE TABLE Analysis (
+    an_id SERIAL PRIMARY KEY,
+    an_name VARCHAR(255) NOT NULL,
+    an_cost NUMERIC(10, 2) NOT NULL CHECK (an_cost >= 0),
+    an_price NUMERIC(10, 2) NOT NULL CHECK (an_price >= 0),
+    an_group INTEGER NOT NULL,
+    FOREIGN KEY (an_group) REFERENCES Groups(gr_id) ON DELETE CASCADE
+);
+
+CREATE TABLE Orders (
+    ord_id SERIAL PRIMARY KEY,
+    ord_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ord_an INTEGER NOT NULL,
+    FOREIGN KEY (ord_an) REFERENCES Analysis(an_id) ON DELETE CASCADE
+);
+
+INSERT INTO Groups (gr_name, gr_temp) VALUES
+('Гематологія', '2-8°C'),
+('Біохімія', '2-8°C'),
+('Імунологія', 'холодильник'),
+('ПЛР-діагностика', '-20°C'),
+('Мікробіологія', 'кімнатна температура');
+
+INSERT INTO Analysis (an_name, an_cost, an_price, an_group) VALUES
+('Загальний аналіз крові', 50.00, 150.00, 1),
+('Глюкоза', 20.00, 80.00, 2),
+('АЛТ', 25.00, 90.00, 2),
+('Антитіла до COVID-19 (IgG)', 60.00, 250.00, 3),
+('ПЛР на COVID-19', 100.00, 400.00, 4),
+('Мазок на стафілокок', 30.00, 120.00, 5);
+
+INSERT INTO Orders (ord_datetime, ord_an) VALUES
+('2020-01-10 09:30', 1),
+('2020-01-15 11:00', 2),
+('2020-01-20 10:15', 1),
+('2020-02-05 12:00', 3),
+('2020-02-10 13:45', 4),
+('2020-02-12 14:20', 2),
+('2020-02-15 15:30', 1),
+('2020-03-01 09:00', 5),
+('2020-03-10 10:00', 4),
+('2020-03-15 11:30', 6),
+('2020-03-20 12:45', 1),
+('2021-01-05 08:20', 1),
+('2021-01-10 10:50', 3),
+('2021-02-07 09:40', 2),
+('2021-02-12 11:10', 5),
+('2021-03-03 10:15', 6),
+('2021-03-10 13:30', 6);
+
+SELECT * FROM Groups
+SELECT * FROM Analysis JOIN Groups ON an_group = gr_id
+SELECT * FROM Orders JOIN Analysis ON ord_an = an_id
+
+-- 1. select an_name and an_price that has ord_datetime 5 feb 2020 to 5+7 feb 2020
+SELECT an_name, an_price
+FROM Analysis JOIN Orders ON ord_an = an_id
+WHERE ord_datetime BETWEEN '2020-02-05' AND '2020-02-12'
+
+-- 2. select cumulative sum of sold tests grouped by gr_id, month, year 
+SELECT EXTRACT(YEAR FROM ord_datetime) AS year,
+	EXTRACT(MONTH FROM ord_datetime) AS month,
+	gr_id,
+	gr_name,
+	COUNT(ord_id) AS tests_sold,
+	SUM(COUNT(ord_id)) OVER (
+		PARTITION BY gr_name, EXTRACT(YEAR FROM ord_datetime)
+		ORDER BY EXTRACT(YEAR FROM ord_datetime), EXTRACT(MONTH FROM ord_datetime)
+		ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative_sum
+FROM Orders
+JOIN Analysis ON Orders.ord_an = Analysis.an_id
+JOIN Groups ON Analysis.an_group = Groups.gr_id
+GROUP BY year, month, gr_id
+ORDER BY gr_id, year, month;
