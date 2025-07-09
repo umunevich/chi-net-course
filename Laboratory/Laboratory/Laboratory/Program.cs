@@ -47,7 +47,7 @@ class Program
         FirstTask(connectionString, context);
         SecondTask(connectionString, context);
         ThirdTask(connectionString, context);
-        //FourthTask(connectionString, context);
+        FourthTask(connectionString, context);
     }
 
     private static void FirstTask(string connectionString, LaboratoryDbContext context)
@@ -72,7 +72,7 @@ class Program
 
     private static void ThirdTask(string connectionString, LaboratoryDbContext context)
     {
-        Console.WriteLine($"3. Update orders that is in interval of 5 years to be made in 2024:");
+        Console.WriteLine($"3. Update orders that is made in less than 5 years ago to made in 2024:");
         Console.WriteLine($"    3.1. Using NpgsqlCommand");
         UpdateOrder.ExecuteWithCommand(connectionString);
         Console.WriteLine($"    3.2. Using EF");
@@ -82,9 +82,9 @@ class Program
     private static void FourthTask(string connectionString, LaboratoryDbContext context)
     {
         Console.WriteLine($"4. Delete orders that has ord_ad = @id:");
-        Console.WriteLine($"    3.1. Using NpgsqlCommand @id = 1");
+        Console.WriteLine($"    4.1. Using NpgsqlCommand @id = 1");
         DeleteOrder.ExecuteWithCommand(connectionString);
-        Console.WriteLine($"    3.2. Using EF @id = 2");
+        Console.WriteLine($"    4.2. Using EF @id = 2");
         DeleteOrder.ExecuteWithEf(context);
     }
 }

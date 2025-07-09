@@ -47,7 +47,6 @@ public static class UpdateOrder
         
         foreach (var order in ordersToUpdate)
         {
-            Console.WriteLine($"{order.Id}: {order.DateTime:yyyy-MM-dd HH:mm:ss}");
             var original = order.DateTime;
             
             order.DateTime = new DateTime(
