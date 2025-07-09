@@ -1,0 +1,43 @@
+﻿services:
+  laboratory:
+    image: laboratory
+    build:
+      context: .
+      dockerfile: Laboratory/Dockerfile
+    depends_on:
+      LaboratoryDb:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__Default=Host=LaboratoryDb;Port=5432;Database=LaboratoryDb;Username=admin;Password=Qwerty_1
+    ports:
+      - "5000:80"
+    networks:
+      - labnet
+    volumes:
+      - .:/src
+
+  LaboratoryDb:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Qwerty_1
+      POSTGRES_DB: LaboratoryDb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "55433:5432"
+    networks:
+      - labnet
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d LaboratoryDb" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+    
+networks:
+  labnet:
+  
