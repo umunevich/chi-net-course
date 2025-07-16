@@ -1,0 +1,21 @@
+@model List<Accountant.Models.Category>
+
+<a asp-controller="Category" asp-action="Add" class="btn btn-primary">
+    Додати категорію
+</a>
+
+<ul>
+    @foreach (var category in Model)
+    {
+        <li>
+            <a asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id">
+                @category.Name
+            </a>
+            <form asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id" method="post" style="display:inline">
+                <button type="submit" class="btn btn-danger btn-sm">
+                    Видалити
+                </button>
+            </form>
+        </li>
+    }
+</ul>
